@@ -5,15 +5,22 @@ from PIL import Image
 import cv2
 import pandas as pd  # Add this import for pandas
 
-model = YOLO("best.pt")
+model = YOLO(r"D:\BAGAS\code\microbubble-v2\code\Program\runs\detect\train5_yolov8n\weights\best.pt")
 
 def convert_to_mm(x):
     return x * 0.0051400    # 1 mm = 0.0051400 px
 
 # Initialize an empty DataFrame to store the results
-result_df = pd.DataFrame(columns=["Image", "r_mean", "r_min", "r_max", "A_mean", "A_min", "A_max"])
-
-IMAGE_PATH_FOLDER = '../../../../../Data/images/train/'
+result_df = {
+    "Image"  :[], 
+    "r_mean" :[], 
+    "r_min"  :[], 
+    "r_max"  :[], 
+    "A_mean" :[], 
+    "A_min"  :[], 
+    "A_max" :[]
+}
+IMAGE_PATH_FOLDER = r"D:\\BAGAS\\code\\microbubble-v2\\code\\Data\\images\\train\\"
 for img in os.listdir(IMAGE_PATH_FOLDER):
     if img.endswith('.JPG'):
         img_path = IMAGE_PATH_FOLDER + img
@@ -40,19 +47,25 @@ for img in os.listdir(IMAGE_PATH_FOLDER):
         A_min  = np.pi * r_min ** 2
         A_max  = np.pi * r_max ** 2
 
-        # Append the results to the DataFrame
-        result_df = result_df._append({
-            "Image": img,
-            "r_mean": r_mean,
-            "r_min": r_min,
-            "r_max": r_max,
-            "A_mean": A_mean,
-            "A_min": A_min,
-            "A_max": A_max
-        }, ignore_index=True)
+        r_mean = float(r_mean ) 
+        r_min  = float(r_min  )
+        r_max  = float(r_max  )
+        A_mean = float(A_mean )
+        A_min  = float(A_min  )
+        A_max  = float(A_max  )
 
+        # Append the results to the DataFrame
+        result_df["Image"  ].append(img_path ) 
+        result_df["r_mean" ].append(r_mean) 
+        result_df["r_min"  ].append(r_min ) 
+        result_df["r_max"  ].append(r_max ) 
+        result_df["A_mean" ].append(A_mean) 
+        result_df["A_min"  ].append(A_min ) 
+        result_df["A_max"  ].append(A_max ) 
+
+df = pd.DataFrame(result_df)
 # Save the DataFrame to a CSV file
-result_df.to_csv("Result_test_model.csv", index=False)
+df.to_csv("Result_test_model_8n.csv", index=False)
 
 # Print the DataFrame for verification
-print(result_df)
+# print(result_df)
